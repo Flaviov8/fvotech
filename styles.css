@@ -1,0 +1,274 @@
+/* Estilos globais */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('fvo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Fixa a imagem de fundo para evitar rolagem */
+}
+
+.form-container {
+    background-color: rgba(255, 255, 255, 0.8); /* Fundo branco com 80% de opacidade */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px; /* Largura máxima do formulário */
+    backdrop-filter: blur(5px); /* Efeito de desfoque no fundo */
+}
+
+/* Typewriter Animation para o título h2 */
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #333;
+    overflow: hidden; /* Esconde o texto que ainda não foi "digitado" */
+    border-right: 0.15em solid #333; /* Cursor piscante */
+    white-space: nowrap; /* Impede que o texto quebre em várias linhas */
+    margin: 0 auto; /* Centraliza o texto */
+    letter-spacing: 0.15em; /* Espaçamento entre as letras */
+    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+}
+
+/* Animação de digitação */
+@keyframes typing {
+    from {
+        width: 0; /* Começa sem texto visível */
+    }
+    to {
+        width: 100%; /* Termina com o texto completo */
+    }
+}
+
+/* Animação do cursor piscante */
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent; /* Cursor invisível */
+    }
+    50% {
+        border-color: #333; /* Cursor visível */
+    }
+}
+
+/* Efeito de digitação suave e moderno */
+h2.smooth-typing {
+    animation: typing 4s steps(40, end) forwards, blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink-caret {
+    from, to {
+        border-color: transparent;
+    }
+    50% {
+        border-color: #333;
+    }
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555; /* Cor do texto para melhor contraste */
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: box-shadow 0.3s ease; /* Adiciona uma transição suave para a sombra */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5); /* Sombra azul quando o input está em foco */
+    outline: none; /* Remove o contorno padrão do navegador */
+}
+
+textarea {
+    resize: vertical; /* Permite redimensionar verticalmente */
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* Transição suave para a cor de fundo */
+}
+
+button:hover {
+    background-color: #313533;
+    animation: pulse 1s infinite; /* Aplica a animação "pulse" ao botão quando o mouse está sobre ele */
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Media Queries para responsividade */
+@media (max-width: 600px) {
+    body {
+        background-size: contain; /* Ajusta a imagem para caber na tela */
+        background-position: top center; /* Posiciona a imagem no topo */
+    }
+
+    .form-container {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    body {
+        background-size: contain; /* Ajusta a imagem para caber na tela */
+        background-position: top center; /* Posiciona a imagem no topo */
+    }
+
+    .form-container {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        font-size: 12px;
+    }
+
+    button {
+        font-size: 12px;
+    }
+}
+
+/* Estilos para o rodapé */
+.footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    font-size: 14px;
+    color: #070707;
+}
+
+.footer p {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Estilos para os links das redes sociais */
+.redes-sociais {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Espaçamento entre os links */
+    margin-top: 10px;
+}
+
+.social-link {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Espaçamento entre o ícone e o texto */
+    transition: color 0.3s ease;
+}
+
+.social-link:hover {
+    color: #141313; /* Cor ao passar o mouse */
+}
+
+.social-logo {
+    width: 20px; /* Ajuste o tamanho do logo */
+    height: 20px; /* Mantenha a proporção */
+}
+
+.social-link i {
+    font-size: 20px; /* Tamanho do ícone do Facebook */
+}
+
+.empresas-apoiadoras {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* Espaçamento entre os nomes das empresas */
+    flex-wrap: wrap; /* Permite que os nomes das empresas quebrem para a próxima linha em telas pequenas */
+}
+
+/* Estilos para o campo de seleção */
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.9);
+    appearance: none; /* Remove o estilo padrão do navegador */
+    -webkit-appearance: none; /* Remove o estilo padrão no Safari */
+    -moz-appearance: none; /* Remove o estilo padrão no Firefox */
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Ícone de seta personalizado */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+    outline: none;
+}
