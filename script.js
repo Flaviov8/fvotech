@@ -1,9 +1,20 @@
 document.addEventListener('DOMContentLoaded', function() {
     const whatsappButton = document.getElementById('whatsappButton');
     const phoneInput = document.getElementById('phone');
-    const whatsappNumber = '5511997180903'; // Número deve incluir código do país sem +
+    const whatsappNumber = '5511997180903'; // Substitua pelo seu número Business API
+    
+    // Configuração do chatbot
+    const chatbotConfig = {
+        welcomeMessage: "Olá! Sou o assistente virtual da Empresa FVOTECH. Como posso ajudar?",
+        quickReplies: [
+            { title: "Orçamento", id: "budget" },
+            { title: "Agendamento", id: "schedule" },
+            { title: "Suporte", id: "support" }
+        ],
+        defaultFlow: "budget" // Fluxo padrão quando vem do formulário
+    };
 
-    // Máscara para telefone melhorada
+    // Máscara para telefone (mantida igual)
     phoneInput.addEventListener('input', function(e) {
         let value = e.target.value.replace(/\D/g, '');
         let formattedValue = '';
@@ -23,24 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     whatsappButton.addEventListener('click', function(e) {
         e.preventDefault();
+        const formData = getFormData();
+        if (!validateForm(formData)) return;
         
-        // Obter valores do formulário
-        const formData = {
+        // Envia com interação do chatbot
+        sendWithChatbotFlow(formData, whatsappNumber, chatbotConfig.defaultFlow);
+    });
+
+    function getFormData() {
+        return {
             name: document.getElementById('name').value.trim(),
             phone: document.getElementById('phone').value.trim(),
             service: document.getElementById('service').value,
             message: document.getElementById('message').value.trim(),
             email: document.getElementById('email').value.trim()
         };
-        
-        // Validação
-        if (!validateForm(formData)) return;
-        
-        // Criar e enviar mensagem
-        sendWhatsAppMessage(formData, whatsappNumber);
-    });
+    }
 
     function validateForm(data) {
+        // Validação mantida igual
         if (!data.name || !data.phone || !data.service || !data.message) {
             showAlert('Por favor, preencha todos os campos obrigatórios!');
             return false;
@@ -59,17 +71,19 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(message);
     }
 
-    function sendWhatsAppMessage(data, whatsappNumber) {
+    function sendWithChatbotFlow(data, whatsappNumber, flowId) {
         const phoneDigits = data.phone.replace(/\D/g, '');
         
-        let whatsappMessage = `Olá, meu nome é ${data.name}!\n\n` +
-                           `*Serviço desejado:* ${data.service}\n\n` +
-                           `*Detalhes:* ${data.message}\n\n` +
-                           `*Contato:* ${phoneDigits}\n` +
-                           `(Formulário enviado via site)`;
+        // Mensagem estruturada para o chatbot
+        let whatsappMessage = `*${chatbotConfig.welcomeMessage}*\n\n`;
+        whatsappMessage += `*Cliente:* ${data.name}\n`;
+        whatsappMessage += `*Assunto:* ${data.service}\n`;
+        whatsappMessage += `*Mensagem:* ${data.message}\n\n`;
+        whatsappMessage += `_Fluxo automático iniciado: ${flowId}_`;
         
-        if (data.email) {
-            whatsappMessage += `\n*E-mail:* ${data.email}`;
+        // Adiciona quick replies se for mobile
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            whatsappMessage += `\n\n${generateQuickReplies()}`;
         }
         
         const encodedMessage = encodeURIComponent(whatsappMessage);
@@ -79,21 +93,20 @@ document.addEventListener('DOMContentLoaded', function() {
         openWhatsApp(whatsappUrl, directAppUrl);
     }
 
+    function generateQuickReplies() {
+        return chatbotConfig.quickReplies.map(reply => 
+            `➡ ${reply.title}: Envie "${reply.id}"`).join('\n');
+    }
+
     function openWhatsApp(webUrl, directUrl) {
+        // Implementação mantida igual
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // Primeiro tenta abrir o app diretamente
             window.location.href = directUrl;
-            
-            // Fallback após 500ms se não abrir
-            setTimeout(() => {
-                window.location.href = webUrl;
-            }, 500);
+            setTimeout(() => { window.location.href = webUrl; }, 500);
         } else {
-            // Para desktop usa a abordagem padrão
             const newWindow = window.open(webUrl, '_blank');
-            
             if (!newWindow || newWindow.closed) {
                 window.location.href = webUrl;
             }
