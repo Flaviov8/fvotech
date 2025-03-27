@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const whatsappButton = document.getElementById('whatsappButton');
-    const contactForm = document.getElementById('contactForm');
     const phoneInput = document.getElementById('phone');
+    const whatsappNumber = '5511997180903'; // Número deve incluir código do país sem +
 
     // Máscara para telefone melhorada
     phoneInput.addEventListener('input', function(e) {
@@ -33,14 +33,13 @@ document.addEventListener('DOMContentLoaded', function() {
             email: document.getElementById('email').value.trim()
         };
         
-        // Validação melhorada
+        // Validação
         if (!validateForm(formData)) return;
         
         // Criar e enviar mensagem
-        sendWhatsAppMessage(formData);
+        sendWhatsAppMessage(formData, whatsappNumber);
     });
 
-    // Função de validação separada para melhor organização
     function validateForm(data) {
         if (!data.name || !data.phone || !data.service || !data.message) {
             showAlert('Por favor, preencha todos os campos obrigatórios!');
@@ -56,16 +55,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return true;
     }
 
-    // Função para mostrar alertas (pode ser substituída por um modal mais bonito)
     function showAlert(message) {
-        // Aqui você poderia implementar um sistema de notificação mais elegante
         alert(message);
     }
 
-    // Função para enviar mensagem ao WhatsApp
-    function sendWhatsAppMessage(data) {
+    function sendWhatsAppMessage(data, whatsappNumber) {
         const phoneDigits = data.phone.replace(/\D/g, '');
-        const whatsappNumber = '5511997180903'; // Substitua pelo seu número
         
         let whatsappMessage = `Olá, meu nome é ${data.name}!\n\n` +
                            `*Serviço desejado:* ${data.service}\n\n` +
@@ -79,30 +74,28 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const encodedMessage = encodeURIComponent(whatsappMessage);
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        const directAppUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
         
-        openWhatsApp(whatsappUrl);
+        openWhatsApp(whatsappUrl, directAppUrl);
     }
 
-    // Função para abrir o WhatsApp com fallbacks
-    function openWhatsApp(url) {
-        // Verifica se é mobile para tentar abrir diretamente o app
+    function openWhatsApp(webUrl, directUrl) {
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         
         if (isMobile) {
-            // Tenta abrir o app diretamente (pode não funcionar em todos os dispositivos)
-            window.location.href = `whatsapp://send?phone=${whatsappNumber}&text=${encodedMessage}`;
+            // Primeiro tenta abrir o app diretamente
+            window.location.href = directUrl;
             
-            // Fallback para caso o app não abra
+            // Fallback após 500ms se não abrir
             setTimeout(() => {
-                window.location.href = url;
+                window.location.href = webUrl;
             }, 500);
         } else {
-            // Para desktop, abre em nova aba
-            const newWindow = window.open(url, '_blank');
+            // Para desktop usa a abordagem padrão
+            const newWindow = window.open(webUrl, '_blank');
             
-            // Fallback se o popup for bloqueado
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                window.location.href = url;
+            if (!newWindow || newWindow.closed) {
+                window.location.href = webUrl;
             }
         }
     }
