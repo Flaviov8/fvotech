@@ -1,78 +1,109 @@
 document.addEventListener('DOMContentLoaded', function() {
     const whatsappButton = document.getElementById('whatsappButton');
     const contactForm = document.getElementById('contactForm');
+    const phoneInput = document.getElementById('phone');
+
+    // Máscara para telefone melhorada
+    phoneInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        let formattedValue = '';
+        
+        if (value.length > 0) {
+            formattedValue = `(${value.substring(0, 2)}`;
+        }
+        if (value.length > 2) {
+            formattedValue += `) ${value.substring(2, 7)}`;
+        }
+        if (value.length > 7) {
+            formattedValue += `-${value.substring(7, 11)}`;
+        }
+        
+        e.target.value = formattedValue;
+    });
 
     whatsappButton.addEventListener('click', function(e) {
         e.preventDefault();
         
         // Obter valores do formulário
-        const name = document.getElementById('name').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const service = document.getElementById('service').value;
-        const message = document.getElementById('message').value.trim();
-        const email = document.getElementById('email').value.trim();
+        const formData = {
+            name: document.getElementById('name').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            service: document.getElementById('service').value,
+            message: document.getElementById('message').value.trim(),
+            email: document.getElementById('email').value.trim()
+        };
         
-        // Validar campos obrigatórios
-        if (!name || !phone || !service || !message) {
-            alert('Por favor, preencha todos os campos obrigatórios!');
-            return;
-        }
+        // Validação melhorada
+        if (!validateForm(formData)) return;
         
-        // Validar telefone (mínimo 10 dígitos)
-        const phoneDigits = phone.replace(/\D/g, '');
-        if (phoneDigits.length < 10 || phoneDigits.length > 11) {
-            alert('Por favor, insira um número de telefone válido com DDD (10 ou 11 dígitos)!');
-            return;
-        }
-        
-        // Criar mensagem para WhatsApp
-        let whatsappMessage = `Olá, meu nome é ${name}!\n\n` +
-                             `*Serviço desejado:* ${service}\n\n` +
-                             `*Detalhes:* ${message}\n\n` +
-                             `*Contato:* ${phoneDigits}\n` +
-                             `(Formulário enviado via site)`;
-        
-        // Adicionar e-mail se existir
-        if (email) {
-            whatsappMessage += `\n*E-mail:* ${email}`;
-        }
-        
-        // Codificar mensagem para URL
-        const encodedMessage = encodeURIComponent(whatsappMessage);
-        
-        // Número de WhatsApp da empresa (substitua pelo seu)
-        const whatsappNumber = '5511997180903'; // Substitua pelo seu número
-        
-        // Criar link do WhatsApp
-        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
-        
-        // Alternativas para abrir o WhatsApp
-        try {
-            // Tentativa 1: Abrir em nova janela (pode ser bloqueada)
-            const newWindow = window.open(whatsappUrl, '_blank');
-            
-            // Se foi bloqueado, Tentativa 2: Redirecionar na mesma janela
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                window.location.href = whatsappUrl;
-            }
-        } catch (e) {
-            // Tentativa 3: Mostrar link manualmente se tudo falhar
-            alert(`Não foi possível abrir o WhatsApp automaticamente. Por favor, clique neste link: ${whatsappUrl}`);
-        }
+        // Criar e enviar mensagem
+        sendWhatsAppMessage(formData);
     });
 
-    // Máscara para telefone (melhorada)
-    const phoneInput = document.getElementById('phone');
-    phoneInput.addEventListener('input', function(e) {
-        let value = e.target.value.replace(/\D/g, '');
-        
-        if (value.length > 2) {
-            value = `(${value.substring(0,2)}) ${value.substring(2)}`;
-        }
-        if (value.length > 10) {
-            value = `${value.substring(0,10)}-${value.substring(10)}`;
+    // Função de validação separada para melhor organização
+    function validateForm(data) {
+        if (!data.name || !data.phone || !data.service || !data.message) {
+            showAlert('Por favor, preencha todos os campos obrigatórios!');
+            return false;
         }
         
-        e.target.value = value;
-    });
+        const phoneDigits = data.phone.replace(/\D/g, '');
+        if (phoneDigits.length < 10 || phoneDigits.length > 11) {
+            showAlert('Por favor, insira um número de telefone válido com DDD (10 ou 11 dígitos)!');
+            return false;
+        }
+        
+        return true;
+    }
+
+    // Função para mostrar alertas (pode ser substituída por um modal mais bonito)
+    function showAlert(message) {
+        // Aqui você poderia implementar um sistema de notificação mais elegante
+        alert(message);
+    }
+
+    // Função para enviar mensagem ao WhatsApp
+    function sendWhatsAppMessage(data) {
+        const phoneDigits = data.phone.replace(/\D/g, '');
+        const whatsappNumber = '5511997180903'; // Substitua pelo seu número
+        
+        let whatsappMessage = `Olá, meu nome é ${data.name}!\n\n` +
+                           `*Serviço desejado:* ${data.service}\n\n` +
+                           `*Detalhes:* ${data.message}\n\n` +
+                           `*Contato:* ${phoneDigits}\n` +
+                           `(Formulário enviado via site)`;
+        
+        if (data.email) {
+            whatsappMessage += `\n*E-mail:* ${data.email}`;
+        }
+        
+        const encodedMessage = encodeURIComponent(whatsappMessage);
+        const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+        
+        openWhatsApp(whatsappUrl);
+    }
+
+    // Função para abrir o WhatsApp com fallbacks
+    function openWhatsApp(url) {
+        // Verifica se é mobile para tentar abrir diretamente o app
+        const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            // Tenta abrir o app diretamente (pode não funcionar em todos os dispositivos)
+            window.location.href = `whatsapp://send?phone=${whatsappNumber}&text=${encodedMessage}`;
+            
+            // Fallback para caso o app não abra
+            setTimeout(() => {
+                window.location.href = url;
+            }, 500);
+        } else {
+            // Para desktop, abre em nova aba
+            const newWindow = window.open(url, '_blank');
+            
+            // Fallback se o popup for bloqueado
+            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                window.location.href = url;
+            }
+        }
+    }
 });
